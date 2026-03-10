@@ -219,4 +219,95 @@ router.delete('/delete/:shareId', async (req, res) => {
   }
 })
 
+router.post('/download-pptx', async (req, res) => {
+  try {
+    const { slides, startupName, template } = req.body
+    const PptxGenJS = require('pptxgenjs')
+    const pptx = new PptxGenJS()
+
+    const TEMPLATE_COLORS = {
+      default: ['1d4ed8','b91c1c','15803d','7e22ce','c2410c','0e7490','be185d','3730a3','a16207','0f766e'],
+      ocean: ['1d4ed8','1e40af','1e3a8a','1d4ed8','2563eb','1d4ed8','1e40af','1e3a8a','1d4ed8','2563eb'],
+      sunset: ['b91c1c','c2410c','a16207','b45309','c2410c','b91c1c','9a3412','a16207','b91c1c','c2410c'],
+      forest: ['15803d','166534','14532d','15803d','16a34a','166534','15803d','14532d','166534','15803d'],
+      galaxy: ['7e22ce','6d28d9','5b21b6','7c3aed','7e22ce','6d28d9','5b21b6','7c3aed','7e22ce','6d28d9'],
+      fire: ['c2410c','b91c1c','a16207','c2410c','b45309','b91c1c','c2410c','a16207','b91c1c','c2410c'],
+    }
+
+    const colors = TEMPLATE_COLORS[template] || TEMPLATE_COLORS.default
+
+    slides.forEach((slide, i) => {
+      const pptSlide = pptx.addSlide()
+      const bgColor = colors[i] || '1d4ed8'
+
+      pptSlide.background = { color: bgColor }
+
+      // Title tag
+      pptSlide.addText(slide.title.toUpperCase(), {
+        x: 0.5, y: 0.3, w: 9, h: 0.4,
+        fontSize: 11,
+        color: 'FFFFFF',
+        transparency: 40,
+        bold: false,
+      })
+
+      // Icon + Heading
+      pptSlide.addText(`${slide.icon}  ${slide.heading}`, {
+        x: 0.5, y: 0.8, w: 9, h: 1.2,
+        fontSize: 28,
+        bold: true,
+        color: 'FFFFFF',
+        wrap: true,
+      })
+
+      // Content
+      pptSlide.addText(slide.content, {
+        x: 0.5, y: 2.2, w: 9, h: 1.5,
+        fontSize: 14,
+        color: 'FFFFFF',
+        transparency: 15,
+        wrap: true,
+      })
+
+      // Bullet Points
+      if (slide.bulletPoints && slide.bulletPoints.length > 0) {
+        const bulletText = slide.bulletPoints.map(p => ({ text: `✦  ${p}`, options: { bullet: false, breakLine: true } }))
+        pptSlide.addText(bulletText, {
+          x: 0.5, y: 3.8, w: 9, h: 2,
+          fontSize: 13,
+          color: 'FFFFFF',
+          transparency: 10,
+          wrap: true,
+        })
+      }
+
+      // Footer
+      pptSlide.addText(startupName, {
+        x: 0.5, y: 6.8, w: 4, h: 0.3,
+        fontSize: 10,
+        color: 'FFFFFF',
+        transparency: 60,
+      })
+
+      pptSlide.addText(`Slide ${slide.slideNumber}`, {
+        x: 6.5, y: 6.8, w: 3, h: 0.3,
+        fontSize: 10,
+        color: 'FFFFFF',
+        transparency: 60,
+        align: 'right',
+      })
+    })
+
+    const buffer = await pptx.write({ outputType: 'nodebuffer' })
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.presentationml.presentation')
+    res.setHeader('Content-Disposition', `attachment; filename="${startupName}_PitchDeck.pptx"`)
+    res.send(buffer)
+
+  } catch (error) {
+    console.error('PPTX Error:', error)
+    res.status(500).json({ message: 'PPTX error: ' + error.message })
+  }
+})
+
 module.exports = router
