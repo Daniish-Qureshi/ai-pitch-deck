@@ -4,6 +4,8 @@ import html2canvas from 'html2canvas'
 import axios from 'axios'
 import PitchScore from './PitchScore'
 import IndiaSchemes from './IndiaSchemes'
+import { useContext } from 'react'
+import { AuthContext } from '../context/AuthContext'
 
 const SLIDE_BG_COLORS = [
   '#1d4ed8', '#b91c1c', '#15803d', '#7e22ce', '#c2410c',
@@ -11,6 +13,7 @@ const SLIDE_BG_COLORS = [
 ]
 
 function SlidePreview({ slides, startupName, industry, fundingGoal, businessModel, onBack }) {
+  const { user } = useContext(AuthContext)
   const [current, setCurrent] = useState(0)
   const [downloading, setDownloading] = useState(false)
   const [scoreData, setScoreData] = useState(null)
@@ -63,21 +66,22 @@ function SlidePreview({ slides, startupName, industry, fundingGoal, businessMode
   }
 
   const handleShare = async () => {
-    try {
-      const res = await axios.post('http://localhost:5000/api/pitch/save', {
-        startupName,
-        slides,
-        industry,
-        fundingGoal,
-        businessModel,
-      })
-      const url = res.data.shareUrl
-      navigator.clipboard.writeText(url)
-      alert(`Link copy ho gaya! 🎉\n\n${url}`)
-    } catch (err) {
-      alert('Share nahi hua — dobara try karo!')
-    }
+  try {
+    const res = await axios.post('http://localhost:5000/api/pitch/save', {
+      startupName,
+      slides,
+      industry,
+      fundingGoal,
+      businessModel,
+      userId: user?._id || user?.id || null
+    })
+    const url = res.data.shareUrl
+    navigator.clipboard.writeText(url)
+    alert(`Link copy ho gaya aur Dashboard mein save bhi ho gaya! 🎉\n\n${url}`)
+  } catch (err) {
+    alert('Share nahi hua — dobara try karo!')
   }
+}
 
   const slide = slides[current]
 

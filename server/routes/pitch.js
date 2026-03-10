@@ -170,11 +170,12 @@ Include schemes like: Startup India, MSME loans, Mudra Yojana, SIDBI, Atal Innov
 
 router.post('/save', async (req, res) => {
   try {
-    const { startupName, slides, industry, fundingGoal, businessModel } = req.body
+    const { startupName, slides, industry, fundingGoal, businessModel, userId } = req.body
     const shareId = crypto.randomUUID().slice(0, 8)
 
     const deck = new Deck({
       shareId,
+      userId: userId || null,
       startupName,
       slides,
       industry,
@@ -195,6 +196,24 @@ router.get('/share/:shareId', async (req, res) => {
     const deck = await Deck.findOne({ shareId: req.params.shareId })
     if (!deck) return res.status(404).json({ message: 'Deck nahi mila!' })
     res.json(deck)
+  } catch (error) {
+    res.status(500).json({ message: 'Error: ' + error.message })
+  }
+})
+
+router.get('/my-decks/:userId', async (req, res) => {
+  try {
+    const decks = await Deck.find({ userId: req.params.userId }).sort({ createdAt: -1 })
+    res.json({ decks })
+  } catch (error) {
+    res.status(500).json({ message: 'Error: ' + error.message })
+  }
+})
+
+router.delete('/delete/:shareId', async (req, res) => {
+  try {
+    await Deck.findOneAndDelete({ shareId: req.params.shareId })
+    res.json({ message: 'Deck delete ho gaya!' })
   } catch (error) {
     res.status(500).json({ message: 'Error: ' + error.message })
   }
