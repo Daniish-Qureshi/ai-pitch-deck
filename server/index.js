@@ -7,17 +7,14 @@ dotenv.config()
 
 const app = express()
 
-// Middleware
 app.use(cors())
 app.use(express.json())
 
-// Connect Database
 connectDB()
 
-// Routes
 app.use('/api/auth', require('./routes/auth'))
+app.use('/api/pitch', require('./routes/pitch'))
 
-// Test route
 app.get('/', (req, res) => {
   res.json({ message: 'PitchAI Server chal raha hai! 🚀' })
 })
