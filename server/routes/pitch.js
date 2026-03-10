@@ -1,20 +1,14 @@
+const crypto = require('crypto')
 const express = require('express')
 const router = express.Router()
 const Groq = require('groq-sdk')
+const Deck = require('../models/Deck')
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
 router.post('/generate', async (req, res) => {
   try {
-    const {
-      startupName,
-      idea,
-      targetAudience,
-      businessModel,
-      usp,
-      fundingGoal,
-      industry
-    } = req.body
+    const { startupName, idea, targetAudience, businessModel, usp, fundingGoal, industry } = req.body
 
     const prompt = `
 You are an expert startup pitch deck consultant. Generate a professional 10-slide pitch deck for an Indian startup.
@@ -53,14 +47,12 @@ Make content specific to Indian market. Use INR for financial figures. Be profes
     })
 
     const text = completion.choices[0]?.message?.content || ''
-
     const jsonMatch = text.match(/\[[\s\S]*\]/)
     if (!jsonMatch) {
       return res.status(500).json({ message: 'AI response parse nahi hua!' })
     }
 
     const slides = JSON.parse(jsonMatch[0])
-
     res.json({ slides, startupName })
 
   } catch (error) {
@@ -173,6 +165,38 @@ Include schemes like: Startup India, MSME loans, Mudra Yojana, SIDBI, Atal Innov
   } catch (error) {
     console.error('Schemes Error:', error)
     res.status(500).json({ message: 'Schemes error: ' + error.message })
+  }
+})
+
+router.post('/save', async (req, res) => {
+  try {
+    const { startupName, slides, industry, fundingGoal, businessModel } = req.body
+    const shareId = crypto.randomUUID().slice(0, 8)
+
+    const deck = new Deck({
+      shareId,
+      startupName,
+      slides,
+      industry,
+      fundingGoal,
+      businessModel
+    })
+
+    await deck.save()
+    res.json({ shareId, shareUrl: `http://localhost:5173/deck/${shareId}` })
+
+  } catch (error) {
+    res.status(500).json({ message: 'Save error: ' + error.message })
+  }
+})
+
+router.get('/share/:shareId', async (req, res) => {
+  try {
+    const deck = await Deck.findOne({ shareId: req.params.shareId })
+    if (!deck) return res.status(404).json({ message: 'Deck nahi mila!' })
+    res.json(deck)
+  } catch (error) {
+    res.status(500).json({ message: 'Error: ' + error.message })
   }
 })
 

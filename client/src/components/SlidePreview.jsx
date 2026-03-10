@@ -23,10 +23,9 @@ function SlidePreview({ slides, startupName, industry, fundingGoal, businessMode
       const pdf = new jsPDF('landscape', 'mm', 'a4')
       const pageWidth = pdf.internal.pageSize.getWidth()
       const pageHeight = pdf.internal.pageSize.getHeight()
-
       for (let i = 0; i < slides.length; i++) {
         setCurrent(i)
-        await new Promise(resolve => setTimeout(resolve, 900))
+        await new Promise((resolve) => setTimeout(resolve, 900))
         const element = slideRef.current
         const canvas = await html2canvas(element, {
           scale: 1.5,
@@ -53,13 +52,30 @@ function SlidePreview({ slides, startupName, industry, fundingGoal, businessMode
     try {
       const res = await axios.post('http://localhost:5000/api/pitch/score', {
         slides,
-        startupName
+        startupName,
       })
       setScoreData(res.data)
     } catch (err) {
       alert('Score nahi mila — dobara try karo!')
     } finally {
       setScoring(false)
+    }
+  }
+
+  const handleShare = async () => {
+    try {
+      const res = await axios.post('http://localhost:5000/api/pitch/save', {
+        startupName,
+        slides,
+        industry,
+        fundingGoal,
+        businessModel,
+      })
+      const url = res.data.shareUrl
+      navigator.clipboard.writeText(url)
+      alert(`Link copy ho gaya! 🎉\n\n${url}`)
+    } catch (err) {
+      alert('Share nahi hua — dobara try karo!')
     }
   }
 
@@ -147,6 +163,13 @@ function SlidePreview({ slides, startupName, industry, fundingGoal, businessMode
 
         {/* Buttons */}
         <div className="mt-8 flex flex-col items-center gap-4">
+
+          <button
+            onClick={handleShare}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-xl font-bold text-lg transition transform hover:scale-105 w-full max-w-sm"
+          >
+            🔗 Share Link Banao
+          </button>
 
           <button
             onClick={handleDownloadPDF}
