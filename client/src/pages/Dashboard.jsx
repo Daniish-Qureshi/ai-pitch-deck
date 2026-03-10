@@ -1,5 +1,5 @@
 import { useAuth } from '../context/AuthContext'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 function Dashboard() {
   const { user, logout } = useAuth()
@@ -34,9 +34,12 @@ function Dashboard() {
           <p className="text-gray-400 mt-2">
             Tera dashboard ready hai — ab pitch deck banao!
           </p>
-          <button className="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition">
+          <Link
+            to="/create"
+            className="mt-6 inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition"
+          >
             🚀 Naya Pitch Deck Banao
-          </button>
+          </Link>
         </div>
       </div>
     </div>
