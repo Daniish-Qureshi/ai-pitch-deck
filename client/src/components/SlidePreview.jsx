@@ -1,36 +1,19 @@
 import { useState, useRef } from 'react'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
-
-const SLIDE_COLORS = [
-  'from-blue-600 to-blue-800',
-  'from-red-600 to-red-800',
-  'from-green-600 to-green-800',
-  'from-purple-600 to-purple-800',
-  'from-orange-600 to-orange-800',
-  'from-cyan-600 to-cyan-800',
-  'from-pink-600 to-pink-800',
-  'from-indigo-600 to-indigo-800',
-  'from-yellow-600 to-yellow-800',
-  'from-teal-600 to-teal-800',
-]
+import axios from 'axios'
+import PitchScore from './PitchScore'
 
 const SLIDE_BG_COLORS = [
-  '#1d4ed8',
-  '#b91c1c',
-  '#15803d',
-  '#7e22ce',
-  '#c2410c',
-  '#0e7490',
-  '#be185d',
-  '#3730a3',
-  '#a16207',
-  '#0f766e',
+  '#1d4ed8', '#b91c1c', '#15803d', '#7e22ce', '#c2410c',
+  '#0e7490', '#be185d', '#3730a3', '#a16207', '#0f766e',
 ]
 
 function SlidePreview({ slides, startupName, onBack }) {
   const [current, setCurrent] = useState(0)
   const [downloading, setDownloading] = useState(false)
+  const [scoreData, setScoreData] = useState(null)
+  const [scoring, setScoring] = useState(false)
   const slideRef = useRef()
 
   const handleDownloadPDF = async () => {
@@ -43,33 +26,39 @@ function SlidePreview({ slides, startupName, onBack }) {
       for (let i = 0; i < slides.length; i++) {
         setCurrent(i)
         await new Promise(resolve => setTimeout(resolve, 900))
-
         const element = slideRef.current
-
         const canvas = await html2canvas(element, {
           scale: 1.5,
           useCORS: true,
           allowTaint: true,
           logging: false,
           backgroundColor: SLIDE_BG_COLORS[i],
-          ignoreElements: (el) => {
-            const style = window.getComputedStyle(el)
-            return style.color.includes('oklch') || style.backgroundColor.includes('oklch')
-          }
         })
-
         const imgData = canvas.toDataURL('image/jpeg', 0.92)
         if (i > 0) pdf.addPage()
         pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight)
       }
-
       pdf.save(`${startupName}_PitchDeck.pdf`)
     } catch (err) {
-      console.error(err)
       alert('PDF error: ' + err.message)
     } finally {
       setDownloading(false)
       setCurrent(0)
+    }
+  }
+
+  const handleGetScore = async () => {
+    setScoring(true)
+    try {
+      const res = await axios.post('http://localhost:5000/api/pitch/score', {
+        slides,
+        startupName
+      })
+      setScoreData(res.data)
+    } catch (err) {
+      alert('Score nahi mila — dobara try karo!')
+    } finally {
+      setScoring(false)
     }
   }
 
@@ -155,15 +144,17 @@ function SlidePreview({ slides, startupName, onBack }) {
           </button>
         </div>
 
-        {/* PDF Download */}
-        <div className="mt-8 text-center">
+        {/* Buttons */}
+        <div className="mt-8 flex flex-col items-center gap-4">
+
+          {/* PDF Download */}
           <button
             onClick={handleDownloadPDF}
             disabled={downloading}
-            className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-10 py-4 rounded-xl font-bold text-lg transition transform hover:scale-105"
+            className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-10 py-4 rounded-xl font-bold text-lg transition transform hover:scale-105 w-full max-w-sm"
           >
             {downloading ? (
-              <span className="flex items-center gap-3">
+              <span className="flex items-center justify-center gap-3">
                 <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
@@ -172,8 +163,33 @@ function SlidePreview({ slides, startupName, onBack }) {
               </span>
             ) : '📄 PDF Download Karo'}
           </button>
-          <p className="text-gray-500 text-sm mt-2">Sabhi 10 slides ek PDF mein save hongi</p>
+
+          {/* Pitch Score */}
+          <button
+            onClick={handleGetScore}
+            disabled={scoring}
+            className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-10 py-4 rounded-xl font-bold text-lg transition transform hover:scale-105 w-full max-w-sm"
+          >
+            {scoring ? (
+              <span className="flex items-center justify-center gap-3">
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                </svg>
+                Score Calculate Ho Raha Hai...
+              </span>
+            ) : '🎯 AI Pitch Score Dekho'}
+          </button>
+
         </div>
+
+        {/* Score Modal */}
+        {scoreData && (
+          <PitchScore
+            scoreData={scoreData}
+            onClose={() => setScoreData(null)}
+          />
+        )}
 
       </div>
     </div>

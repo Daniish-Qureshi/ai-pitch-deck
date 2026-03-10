@@ -69,4 +69,59 @@ Make content specific to Indian market. Use INR for financial figures. Be profes
   }
 })
 
+router.post('/score', async (req, res) => {
+  try {
+    const { slides, startupName } = req.body
+
+    const prompt = `
+You are an expert startup investor and pitch deck evaluator.
+
+Analyze this pitch deck for "${startupName}" and give a detailed score.
+
+Slides content:
+${slides.map(s => `Slide ${s.slideNumber} - ${s.title}: ${s.heading}. ${s.content}`).join('\n')}
+
+Return ONLY a valid JSON object like this:
+{
+  "totalScore": 78,
+  "grade": "B+",
+  "summary": "Overall feedback in 2-3 sentences",
+  "categories": [
+    { "name": "Problem Clarity", "score": 8, "maxScore": 10, "feedback": "specific feedback" },
+    { "name": "Solution Strength", "score": 7, "maxScore": 10, "feedback": "specific feedback" },
+    { "name": "Market Size", "score": 8, "maxScore": 10, "feedback": "specific feedback" },
+    { "name": "Business Model", "score": 7, "maxScore": 10, "feedback": "specific feedback" },
+    { "name": "Competitive Edge", "score": 6, "maxScore": 10, "feedback": "specific feedback" },
+    { "name": "Traction", "score": 5, "maxScore": 10, "feedback": "specific feedback" },
+    { "name": "Team", "score": 6, "maxScore": 10, "feedback": "specific feedback" },
+    { "name": "Financial Ask", "score": 7, "maxScore": 10, "feedback": "specific feedback" }
+  ],
+  "strengths": ["strength 1", "strength 2", "strength 3"],
+  "improvements": ["improvement 1", "improvement 2", "improvement 3"],
+  "investorVerdict": "Would invest / Would not invest yet / Needs more traction"
+}
+`
+
+    const completion = await groq.chat.completions.create({
+      messages: [{ role: 'user', content: prompt }],
+      model: 'llama-3.3-70b-versatile',
+      temperature: 0.5,
+      max_tokens: 2000,
+    })
+
+    const text = completion.choices[0]?.message?.content || ''
+    const jsonMatch = text.match(/\{[\s\S]*\}/)
+    if (!jsonMatch) {
+      return res.status(500).json({ message: 'Score parse nahi hua!' })
+    }
+
+    const scoreData = JSON.parse(jsonMatch[0])
+    res.json(scoreData)
+
+  } catch (error) {
+    console.error('Score Error:', error)
+    res.status(500).json({ message: 'Score error: ' + error.message })
+  }
+})
+
 module.exports = router
