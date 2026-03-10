@@ -124,4 +124,56 @@ Return ONLY a valid JSON object like this:
   }
 })
 
+router.post('/india-schemes', async (req, res) => {
+  try {
+    const { industry, fundingGoal, businessModel } = req.body
+
+    const prompt = `
+You are an expert on Indian government schemes and startup funding.
+
+For a startup with these details:
+- Industry: ${industry}
+- Funding Goal: ${fundingGoal}
+- Business Model: ${businessModel}
+
+Suggest the most relevant Indian government schemes, grants, and funding options.
+
+Return ONLY a valid JSON array:
+[
+  {
+    "name": "Scheme name",
+    "ministry": "Ministry name",
+    "benefit": "What benefit they get",
+    "amount": "Amount in INR",
+    "eligibility": "Who can apply",
+    "link": "official website",
+    "icon": "emoji"
+  }
+]
+
+Include schemes like: Startup India, MSME loans, Mudra Yojana, SIDBI, Atal Innovation Mission, Digital India, sector-specific schemes. Give exactly 5 most relevant schemes.
+`
+
+    const completion = await groq.chat.completions.create({
+      messages: [{ role: 'user', content: prompt }],
+      model: 'llama-3.3-70b-versatile',
+      temperature: 0.5,
+      max_tokens: 2000,
+    })
+
+    const text = completion.choices[0]?.message?.content || ''
+    const jsonMatch = text.match(/\[[\s\S]*\]/)
+    if (!jsonMatch) {
+      return res.status(500).json({ message: 'Schemes parse nahi huyi!' })
+    }
+
+    const schemes = JSON.parse(jsonMatch[0])
+    res.json({ schemes })
+
+  } catch (error) {
+    console.error('Schemes Error:', error)
+    res.status(500).json({ message: 'Schemes error: ' + error.message })
+  }
+})
+
 module.exports = router

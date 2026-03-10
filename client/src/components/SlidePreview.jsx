@@ -3,13 +3,14 @@ import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import axios from 'axios'
 import PitchScore from './PitchScore'
+import IndiaSchemes from './IndiaSchemes'
 
 const SLIDE_BG_COLORS = [
   '#1d4ed8', '#b91c1c', '#15803d', '#7e22ce', '#c2410c',
   '#0e7490', '#be185d', '#3730a3', '#a16207', '#0f766e',
 ]
 
-function SlidePreview({ slides, startupName, onBack }) {
+function SlidePreview({ slides, startupName, industry, fundingGoal, businessModel, onBack }) {
   const [current, setCurrent] = useState(0)
   const [downloading, setDownloading] = useState(false)
   const [scoreData, setScoreData] = useState(null)
@@ -147,7 +148,6 @@ function SlidePreview({ slides, startupName, onBack }) {
         {/* Buttons */}
         <div className="mt-8 flex flex-col items-center gap-4">
 
-          {/* PDF Download */}
           <button
             onClick={handleDownloadPDF}
             disabled={downloading}
@@ -164,7 +164,6 @@ function SlidePreview({ slides, startupName, onBack }) {
             ) : '📄 PDF Download Karo'}
           </button>
 
-          {/* Pitch Score */}
           <button
             onClick={handleGetScore}
             disabled={scoring}
@@ -182,6 +181,13 @@ function SlidePreview({ slides, startupName, onBack }) {
           </button>
 
         </div>
+
+        {/* India Schemes */}
+        <IndiaSchemes
+          industry={industry}
+          fundingGoal={fundingGoal}
+          businessModel={businessModel}
+        />
 
         {/* Score Modal */}
         {scoreData && (
