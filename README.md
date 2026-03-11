@@ -4,7 +4,7 @@
 
 ![PitchAI Banner](https://img.shields.io/badge/PitchAI-AI%20Pitch%20Deck%20Generator-blue?style=for-the-badge&logo=rocket)
 
-[![Live Demo](https://img.shields.io/badge/🌐%20Live%20Demo-Vercel-black?style=for-the-badge)](https://ai-pitch-deck.vercel.app)
+[![Live Demo](https://img.shields.io/badge/🌐%20Live%20Demo-Vercel-black?style=for-the-badge)](https://ai-pitch-deck-one.vercel.app/)
 [![Backend](https://img.shields.io/badge/🔧%20Backend-Render-purple?style=for-the-badge)](https://ai-pitch-deck-ajbt.onrender.com)
 [![GitHub](https://img.shields.io/badge/GitHub-Daniish--Qureshi-181717?style=for-the-badge&logo=github)](https://github.com/Daniish-Qureshi)
 
@@ -18,7 +18,7 @@
 
 **PitchAI** is a full-stack web application that uses **Groq AI (Llama 3.3 70B)** to automatically generate professional 10-slide startup pitch decks. Built for Indian entrepreneurs, it includes India-specific features like government scheme recommendations and INR-based projections.
 
-> 🎓 BCA Final Year Project | Danish Qureshi | Jaipur, 2026
+> 🎓 BCA Final Year Project | Danish Qureshi | Dadri, Uttar Pradesh, 2026
 
 ---
 
@@ -166,7 +166,7 @@ Open [http://localhost:5173](http://localhost:5173) 🎉
 
 | Service | Platform | URL |
 |---------|----------|-----|
-| Frontend | Vercel | [ai-pitch-deck.vercel.app](https://ai-pitch-deck.vercel.app) |
+| Frontend | Vercel | [ai-pitch-deck.vercel.app](https://ai-pitch-deck-one.vercel.app/) |
 | Backend | Render | [ai-pitch-deck-ajbt.onrender.com](https://ai-pitch-deck-ajbt.onrender.com) |
 | Database | MongoDB Atlas | Cloud hosted |
 
@@ -174,20 +174,20 @@ Open [http://localhost:5173](http://localhost:5173) 🎉
 
 ## 📸 Screenshots
 
-### Landing Page
-> Clean dark UI with hero section, features grid, and How it Works
+### 🏠 Landing Page
+![Landing Page](screenshots/landing.png)
 
-### Deck Generator
-> 7-field form → AI generates 10 slides in ~10 seconds
+### 📝 Deck Generator Form
+![Form](screenshots/form.png)
 
-### Slide Preview
-> Navigate slides, switch templates, edit content, export PDF/PPTX
+### 🎨 Slide Preview
+![Slides](screenshots/slides.png)
 
-### AI Pitch Score
-> Grade (A-F), 8-category scores, strengths, improvements, investor verdict
+### 🎯 AI Pitch Score
+![Score](screenshots/score.png)
 
-### India Schemes
-> 5 relevant govt schemes with ministry, benefit amount, and official links
+### 🇮🇳 India Government Schemes
+![Schemes](screenshots/schemes.png)
 
 ---
 
@@ -206,7 +206,7 @@ Open [http://localhost:5173](http://localhost:5173) 🎉
 ## 👨‍💻 Developer
 
 **Danish Qureshi**
-- 🎓 BCA 3rd Year | Jaipur, Rajasthan
+- 🎓 BCA 3rd Year | Dadri, Uttar Pradesh
 - 💼 Frontend Developer
 - 🌐 Portfolio: [danish-qureshi-6ew5.vercel.app](https://danish-qureshi-6ew5.vercel.app)
 - 🐙 GitHub: [github.com/Daniish-Qureshi](https://github.com/Daniish-Qureshi)
