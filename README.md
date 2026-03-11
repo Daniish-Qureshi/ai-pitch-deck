@@ -175,19 +175,19 @@ Open [http://localhost:5173](http://localhost:5173) 🎉
 ## 📸 Screenshots
 
 ### 🏠 Landing Page
-![Landing Page](screenshots/landing.png)
+![Landing Page](https://github.com/Daniish-Qureshi/ai-pitch-deck/blob/main/screenshort/LadingPage.png)
 
 ### 📝 Deck Generator Form
-![Form](screenshots/form.png)
+![Form](https://github.com/Daniish-Qureshi/ai-pitch-deck/blob/main/screenshort/PitchForm.png)
 
 ### 🎨 Slide Preview
-![Slides](screenshots/slides.png)
+![Slides](https://github.com/Daniish-Qureshi/ai-pitch-deck/blob/main/screenshort/SliedPreview.png)
 
 ### 🎯 AI Pitch Score
-![Score](screenshots/score.png)
+![Score](https://github.com/Daniish-Qureshi/ai-pitch-deck/blob/main/screenshort/PitchScore.png)
 
 ### 🇮🇳 India Government Schemes
-![Schemes](screenshots/schemes.png)
+![Schemes](https://github.com/Daniish-Qureshi/ai-pitch-deck/blob/main/screenshort/IndianScheme.png)
 
 ---
 
