@@ -20,7 +20,7 @@ function Dashboard() {
   const fetchDecks = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/pitch/my-decks/${user._id || user.id}`,
+        `https://ai-pitch-deck-ajbt.onrender.com/api/pitch/my-decks/${user._id || user.id}`,
       );
       setDecks(res.data.decks);
     } catch (err) {
@@ -33,7 +33,7 @@ function Dashboard() {
   const handleDelete = async (shareId) => {
     if (!confirm("Kya sach mein delete karna hai?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/pitch/delete/${shareId}`);
+      await axios.delete(`https://ai-pitch-deck-ajbt.onrender.com/api/pitch/delete/${shareId}`);
       setDecks(decks.filter((d) => d.shareId !== shareId));
     } catch (err) {
       alert("Delete nahi hua!");

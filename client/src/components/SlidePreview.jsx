@@ -153,7 +153,7 @@ function SlidePreview({
   const handleGetScore = async () => {
     setScoring(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/pitch/score", {
+      const res = await axios.post("https://ai-pitch-deck-ajbt.onrender.com/api/pitch/score", {
         slides: slidesList,
         startupName,
       });
@@ -167,7 +167,7 @@ function SlidePreview({
 
   const handleShare = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/pitch/save", {
+      const res = await axios.post("https://ai-pitch-deck-ajbt.onrender.com/api/pitch/save", {
         startupName,
         slides: slidesList,
         industry,
@@ -188,7 +188,7 @@ function SlidePreview({
   const handleDownloadPPTX = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/pitch/download-pptx",
+        "https://ai-pitch-deck-ajbt.onrender.com/api/pitch/download-pptx",
         { slides: slidesList, startupName, template },
         { responseType: "blob" },
       );

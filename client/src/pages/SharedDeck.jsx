@@ -16,7 +16,7 @@ function SharedDeck() {
   useEffect(() => {
     const fetchDeck = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/pitch/share/${shareId}`)
+        const res = await axios.get(`https://ai-pitch-deck-ajbt.onrender.com/api/pitch/share/${shareId}`)
         setDeck(res.data)
       } catch (err) {
         alert('Deck nahi mila!')

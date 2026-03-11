@@ -8,7 +8,7 @@ function IndiaSchemes({ industry, fundingGoal, businessModel }) {
   const fetchSchemes = async () => {
     setLoading(true)
     try {
-      const res = await axios.post('http://localhost:5000/api/pitch/india-schemes', {
+      const res = await axios.post('https://ai-pitch-deck-ajbt.onrender.com/api/pitch/india-schemes', {
         industry,
         fundingGoal,
         businessModel
