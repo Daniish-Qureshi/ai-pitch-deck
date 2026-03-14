@@ -8,7 +8,7 @@
 [![Backend](https://img.shields.io/badge/🔧%20Backend-Render-purple?style=for-the-badge)](https://ai-pitch-deck-ajbt.onrender.com)
 [![GitHub](https://img.shields.io/badge/GitHub-Daniish--Qureshi-181717?style=for-the-badge&logo=github)](https://github.com/Daniish-Qureshi)
 
-**India ka pehla AI-Powered Pitch Deck Generator — Sirf 2 minute mein investor-ready presentation!**
+**India ka AI-Powered Pitch Deck Generator — Sirf 2 minute mein investor-ready presentation!**
 
 </div>
 
