@@ -8,94 +8,100 @@ import { AuthContext } from "../context/AuthContext";
 
 const TEMPLATES = {
   default: {
-    name: "🎨 Default",
+    name: "⚡ Default",
     colors: [
-      "#1d4ed8",
-      "#b91c1c",
-      "#15803d",
-      "#7e22ce",
-      "#c2410c",
-      "#0e7490",
-      "#be185d",
-      "#3730a3",
-      "#a16207",
-      "#0f766e",
+      "#1a1a2e",
+      "#16213e",
+      "#0f3460",
+      "#533483",
+      "#2b2d42",
+      "#1a1a2e",
+      "#16213e",
+      "#0f3460",
+      "#533483",
+      "#2b2d42",
     ],
+    accent: "#60a5fa",
   },
   ocean: {
     name: "🌊 Ocean",
     colors: [
-      "#1d4ed8",
-      "#1e40af",
-      "#1e3a8a",
-      "#1d4ed8",
-      "#2563eb",
-      "#1d4ed8",
-      "#1e40af",
-      "#1e3a8a",
-      "#1d4ed8",
-      "#2563eb",
+      "#0c1b33",
+      "#0d2137",
+      "#0e2a42",
+      "#0f3350",
+      "#103d5e",
+      "#0c1b33",
+      "#0d2137",
+      "#0e2a42",
+      "#0f3350",
+      "#103d5e",
     ],
+    accent: "#38bdf8",
   },
   sunset: {
     name: "🌅 Sunset",
     colors: [
-      "#b91c1c",
-      "#c2410c",
-      "#a16207",
-      "#b45309",
-      "#c2410c",
-      "#b91c1c",
-      "#9a3412",
-      "#a16207",
-      "#b91c1c",
-      "#c2410c",
+      "#1a0a0a",
+      "#2d1010",
+      "#3d1515",
+      "#4a1c1c",
+      "#3d2020",
+      "#1a0a0a",
+      "#2d1010",
+      "#3d1515",
+      "#4a1c1c",
+      "#3d2020",
     ],
+    accent: "#f87171",
   },
   forest: {
     name: "🌿 Forest",
     colors: [
-      "#15803d",
-      "#166534",
-      "#14532d",
-      "#15803d",
-      "#16a34a",
-      "#166534",
-      "#15803d",
-      "#14532d",
-      "#166534",
-      "#15803d",
+      "#0a1a0f",
+      "#0d2114",
+      "#0f2a1a",
+      "#113320",
+      "#133d25",
+      "#0a1a0f",
+      "#0d2114",
+      "#0f2a1a",
+      "#113320",
+      "#133d25",
     ],
+    accent: "#4ade80",
   },
   galaxy: {
     name: "🌌 Galaxy",
     colors: [
-      "#7e22ce",
-      "#6d28d9",
-      "#5b21b6",
-      "#7c3aed",
-      "#7e22ce",
-      "#6d28d9",
-      "#5b21b6",
-      "#7c3aed",
-      "#7e22ce",
-      "#6d28d9",
+      "#0d0d1a",
+      "#120d26",
+      "#180d33",
+      "#1e0d40",
+      "#150d2e",
+      "#0d0d1a",
+      "#120d26",
+      "#180d33",
+      "#1e0d40",
+      "#150d2e",
     ],
+    accent: "#a78bfa",
   },
-  fire: {
-    name: "🔥 Fire",
+  midnight: {
+    name: "🖤 Midnight",
     colors: [
-      "#c2410c",
-      "#b91c1c",
-      "#a16207",
-      "#c2410c",
-      "#b45309",
-      "#b91c1c",
-      "#c2410c",
-      "#a16207",
-      "#b91c1c",
-      "#c2410c",
+      "#080808",
+      "#0d0d0d",
+      "#111111",
+      "#141414",
+      "#0f0f0f",
+      "#080808",
+      "#0d0d0d",
+      "#111111",
+      "#141414",
+      "#0f0f0f",
     ],
+    accent: "#e2e8f0",
   },
 };
 
@@ -119,6 +125,7 @@ function SlidePreview({
   const slideRef = useRef();
 
   const slide = slidesList[current];
+  const tmpl = TEMPLATES[template];
 
   const handleDownloadPDF = async () => {
     setDownloading(true);
@@ -128,9 +135,8 @@ function SlidePreview({
       const pageHeight = pdf.internal.pageSize.getHeight();
       for (let i = 0; i < slidesList.length; i++) {
         setCurrent(i);
-        await new Promise((resolve) => setTimeout(resolve, 900));
-        const element = slideRef.current;
-        const canvas = await html2canvas(element, {
+        await new Promise((r) => setTimeout(r, 900));
+        const canvas = await html2canvas(slideRef.current, {
           scale: 1.5,
           useCORS: true,
           allowTaint: true,
@@ -153,13 +159,13 @@ function SlidePreview({
   const handleGetScore = async () => {
     setScoring(true);
     try {
-      const res = await axios.post("https://ai-pitch-deck-ajbt.onrender.com/api/pitch/score", {
-        slides: slidesList,
-        startupName,
-      });
+      const res = await axios.post(
+        "https://ai-pitch-deck-ajbt.onrender.com/api/pitch/score",
+        { slides: slidesList, startupName },
+      );
       setScoreData(res.data);
-    } catch (err) {
-      alert("Score nahi mila — dobara try karo!");
+    } catch {
+      alert("Score nahi mila!");
     } finally {
       setScoring(false);
     }
@@ -167,21 +173,21 @@ function SlidePreview({
 
   const handleShare = async () => {
     try {
-      const res = await axios.post("https://ai-pitch-deck-ajbt.onrender.com/api/pitch/save", {
-        startupName,
-        slides: slidesList,
-        industry,
-        fundingGoal,
-        businessModel,
-        userId: user?._id || user?.id || null,
-      });
-      const url = res.data.shareUrl;
-      navigator.clipboard.writeText(url);
-      alert(
-        `Link copy ho gaya aur Dashboard mein save bhi ho gaya! 🎉\n\n${url}`,
+      const res = await axios.post(
+        "https://ai-pitch-deck-ajbt.onrender.com/api/pitch/save",
+        {
+          startupName,
+          slides: slidesList,
+          industry,
+          fundingGoal,
+          businessModel,
+          userId: user?._id || user?.id || null,
+        },
       );
-    } catch (err) {
-      alert("Share nahi hua — dobara try karo!");
+      navigator.clipboard.writeText(res.data.shareUrl);
+      alert(`Link copy ho gaya! 🎉\n\n${res.data.shareUrl}`);
+    } catch {
+      alert("Share nahi hua!");
     }
   };
 
@@ -199,8 +205,8 @@ function SlidePreview({
       document.body.appendChild(link);
       link.click();
       link.remove();
-    } catch (err) {
-      alert("PPTX error — dobara try karo!");
+    } catch {
+      alert("PPTX error!");
     }
   };
 
@@ -208,7 +214,6 @@ function SlidePreview({
     setEditData({ ...slidesList[current] });
     setEditing(true);
   };
-
   const handleSaveEdit = () => {
     const updated = [...slidesList];
     updated[current] = editData;
@@ -218,27 +223,24 @@ function SlidePreview({
   };
 
   return (
-    <div className="min-h-screen bg-[#0F172A] px-6 py-8">
+    <div className="min-h-screen bg-[#050810] px-4 py-8">
       <div className="max-w-4xl mx-auto">
         {/* Edit Modal */}
         {editing && editData && (
-          <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-            <div className="bg-[#1E293B] rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-[#0f1117] border border-white/10 rounded-3xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-bold text-xl">
-                  ✏️ Slide Edit Karo
-                </h3>
+                <h3 className="text-white font-semibold">✏️ Slide Edit Karo</h3>
                 <button
                   onClick={() => setEditing(false)}
-                  className="text-gray-400 hover:text-white text-xl"
+                  className="text-gray-500 hover:text-white w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition"
                 >
                   ✕
                 </button>
               </div>
-
               <div className="space-y-4">
                 <div>
-                  <label className="text-gray-400 text-sm mb-1 block">
+                  <label className="text-gray-500 text-xs uppercase tracking-wider mb-2 block">
                     Heading
                   </label>
                   <input
@@ -246,12 +248,11 @@ function SlidePreview({
                     onChange={(e) =>
                       setEditData({ ...editData, heading: e.target.value })
                     }
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:border-purple-500"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-blue-500/50 transition"
                   />
                 </div>
-
                 <div>
-                  <label className="text-gray-400 text-sm mb-1 block">
+                  <label className="text-gray-500 text-xs uppercase tracking-wider mb-2 block">
                     Content
                   </label>
                   <textarea
@@ -260,12 +261,11 @@ function SlidePreview({
                       setEditData({ ...editData, content: e.target.value })
                     }
                     rows={4}
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:border-purple-500 resize-none"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-blue-500/50 transition resize-none"
                   />
                 </div>
-
                 <div>
-                  <label className="text-gray-400 text-sm mb-2 block">
+                  <label className="text-gray-500 text-xs uppercase tracking-wider mb-2 block">
                     Bullet Points
                   </label>
                   {editData.bulletPoints.map((point, i) => (
@@ -273,20 +273,22 @@ function SlidePreview({
                       <input
                         value={point}
                         onChange={(e) => {
-                          const updated = [...editData.bulletPoints];
-                          updated[i] = e.target.value;
-                          setEditData({ ...editData, bulletPoints: updated });
+                          const u = [...editData.bulletPoints];
+                          u[i] = e.target.value;
+                          setEditData({ ...editData, bulletPoints: u });
                         }}
-                        className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-white outline-none focus:border-purple-500"
+                        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white outline-none focus:border-blue-500/50 transition"
                       />
                       <button
-                        onClick={() => {
-                          const updated = editData.bulletPoints.filter(
-                            (_, idx) => idx !== i,
-                          );
-                          setEditData({ ...editData, bulletPoints: updated });
-                        }}
-                        className="bg-red-600 hover:bg-red-700 text-white px-3 rounded-xl"
+                        onClick={() =>
+                          setEditData({
+                            ...editData,
+                            bulletPoints: editData.bulletPoints.filter(
+                              (_, idx) => idx !== i,
+                            ),
+                          })
+                        }
+                        className="bg-red-500/20 hover:bg-red-500/30 text-red-400 px-3 rounded-xl transition"
                       >
                         ✕
                       </button>
@@ -299,23 +301,22 @@ function SlidePreview({
                         bulletPoints: [...editData.bulletPoints, ""],
                       })
                     }
-                    className="text-purple-400 hover:text-purple-300 text-sm mt-1"
+                    className="text-blue-400 hover:text-blue-300 text-sm mt-1 transition"
                   >
                     + Point Add Karo
                   </button>
                 </div>
               </div>
-
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={handleSaveEdit}
-                  className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-bold transition"
+                  className="flex-1 bg-white text-black py-3 rounded-xl font-semibold hover:bg-gray-100 transition"
                 >
-                  ✅ Save Karo
+                  ✅ Save
                 </button>
                 <button
                   onClick={() => setEditing(false)}
-                  className="flex-1 bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl transition"
+                  className="flex-1 bg-white/5 hover:bg-white/10 text-white py-3 rounded-xl transition"
                 >
                   Cancel
                 </button>
@@ -325,43 +326,41 @@ function SlidePreview({
         )}
 
         {/* Top Bar */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-8">
           <button
             onClick={onBack}
-            className="text-gray-400 hover:text-white border border-white/20 px-4 py-2 rounded-lg transition"
+            className="flex items-center gap-2 text-gray-500 hover:text-white transition text-sm"
           >
-            ← Wapas Jao
+            ← Wapas
           </button>
-          <h2 className="text-white font-bold text-lg">
-            {startupName} — Pitch Deck
-          </h2>
           <div className="flex items-center gap-2">
-            <button
-              onClick={handleEdit}
-              className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition"
-            >
-              ✏️ Edit
-            </button>
-            <span className="text-gray-400 text-sm">
+            <span className="text-gray-600 text-sm font-medium">
+              {startupName}
+            </span>
+            <span className="text-gray-700">·</span>
+            <span className="text-gray-600 text-sm">
               {current + 1} / {slidesList.length}
             </span>
           </div>
+          <button
+            onClick={handleEdit}
+            className="text-sm border border-white/10 bg-white/5 hover:bg-white/10 text-gray-300 px-4 py-2 rounded-xl transition"
+          >
+            ✏️ Edit
+          </button>
         </div>
 
         {/* Template Selector */}
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-4 mb-6">
-          <p className="text-gray-400 text-sm mb-3 text-center">
-            🎨 Template Chuno
-          </p>
+        <div className="mb-6">
           <div className="flex flex-wrap gap-2 justify-center">
             {Object.entries(TEMPLATES).map(([key, tmpl]) => (
               <button
                 key={key}
                 onClick={() => setTemplate(key)}
-                className={`px-4 py-2 rounded-xl text-sm font-semibold transition ${
+                className={`px-4 py-2 rounded-xl text-xs font-medium transition ${
                   template === key
                     ? "bg-white text-black"
-                    : "bg-white/10 text-white hover:bg-white/20"
+                    : "bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10"
                 }`}
               >
                 {tmpl.name}
@@ -370,66 +369,152 @@ function SlidePreview({
           </div>
         </div>
 
-        {/* Slide */}
+        {/* SLIDE */}
         <div
           ref={slideRef}
-          style={{ backgroundColor: TEMPLATES[template].colors[current] }}
-          className="rounded-2xl p-10 min-h-[420px] flex flex-col justify-between shadow-2xl"
+          className="rounded-3xl overflow-hidden shadow-2xl relative"
+          style={{
+            backgroundColor: tmpl.colors[current],
+            minHeight: "460px",
+            boxShadow: `0 0 80px ${tmpl.accent}15, 0 30px 60px rgba(0,0,0,0.5)`,
+          }}
         >
-          <div>
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-5xl">{slide.icon}</span>
-              <div>
-                <p
-                  style={{ color: "rgba(255,255,255,0.6)" }}
-                  className="text-sm uppercase tracking-widest"
+          {/* Slide inner glow */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: `radial-gradient(ellipse at 20% 20%, ${tmpl.accent}15 0%, transparent 60%)`,
+            }}
+          />
+
+          {/* Slide number badge */}
+          <div
+            className="absolute top-6 right-6"
+            style={{
+              color: `${tmpl.accent}60`,
+              fontSize: "11px",
+              fontWeight: "600",
+              letterSpacing: "0.1em",
+            }}
+          >
+            {String(current + 1).padStart(2, "0")} / {slidesList.length}
+          </div>
+
+          <div
+            className="relative z-10 p-10 md:p-14 flex flex-col justify-between"
+            style={{ minHeight: "460px" }}
+          >
+            <div>
+              {/* Title tag */}
+              <div
+                className="inline-flex items-center gap-2 mb-8"
+                style={{
+                  background: `${tmpl.accent}15`,
+                  border: `1px solid ${tmpl.accent}30`,
+                  borderRadius: "100px",
+                  padding: "6px 14px",
+                }}
+              >
+                <span
+                  style={{
+                    color: tmpl.accent,
+                    fontSize: "13px",
+                    fontWeight: "500",
+                    letterSpacing: "0.05em",
+                  }}
                 >
                   {slide.title}
-                </p>
-                <h2 style={{ color: "#ffffff" }} className="text-3xl font-bold">
+                </span>
+              </div>
+
+              {/* Icon + Heading */}
+              <div className="flex items-start gap-4 mb-6">
+                <span style={{ fontSize: "44px", lineHeight: 1 }}>
+                  {slide.icon}
+                </span>
+                <h2
+                  style={{
+                    color: "#ffffff",
+                    fontSize: "clamp(1.5rem, 3vw, 2.2rem)",
+                    fontWeight: "700",
+                    lineHeight: "1.2",
+                    letterSpacing: "-0.02em",
+                  }}
+                >
                   {slide.heading}
                 </h2>
               </div>
+
+              {/* Content */}
+              <p
+                style={{
+                  color: "rgba(255,255,255,0.65)",
+                  fontSize: "15px",
+                  lineHeight: "1.7",
+                  marginBottom: "28px",
+                  maxWidth: "640px",
+                }}
+              >
+                {slide.content}
+              </p>
+
+              {/* Bullet Points */}
+              {slide.bulletPoints?.length > 0 && (
+                <ul className="space-y-3">
+                  {slide.bulletPoints.map((point, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <span
+                        style={{
+                          color: tmpl.accent,
+                          marginTop: "7px",
+                          flexShrink: 0,
+                          background: `${tmpl.accent}20`,
+                          borderRadius: "50%",
+                          width: "20px",
+                          height: "20px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "10px",
+                        }}
+                      >
+                        ✦
+                      </span>
+                      <span
+                        style={{
+                          color: "rgba(255,255,255,0.8)",
+                          fontSize: "14px",
+                          lineHeight: "1.6",
+                        }}
+                      >
+                        {point}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
-            <p
-              style={{ color: "rgba(255,255,255,0.85)" }}
-              className="text-lg leading-relaxed mb-6"
+            {/* Footer */}
+            <div
+              className="flex justify-between items-center mt-10 pt-6"
+              style={{ borderTop: `1px solid rgba(255,255,255,0.06)` }}
             >
-              {slide.content}
-            </p>
-
-            {slide.bulletPoints && slide.bulletPoints.length > 0 && (
-              <ul className="space-y-3">
-                {slide.bulletPoints.map((point, i) => (
-                  <li
-                    key={i}
-                    className="flex items-start gap-3"
-                    style={{ color: "rgba(255,255,255,0.9)" }}
-                  >
-                    <span style={{ color: "#ffffff" }} className="mt-1">
-                      ✦
-                    </span>
-                    <span>{point}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <div className="flex justify-between items-center mt-8">
-            <span
-              style={{ color: "rgba(255,255,255,0.4)" }}
-              className="text-sm"
-            >
-              {startupName}
-            </span>
-            <span
-              style={{ color: "rgba(255,255,255,0.3)" }}
-              className="text-sm"
-            >
-              Slide {slide.slideNumber}
-            </span>
+              <span
+                style={{
+                  color: "rgba(255,255,255,0.3)",
+                  fontSize: "12px",
+                  fontWeight: "500",
+                }}
+              >
+                {startupName}
+              </span>
+              <span
+                style={{ color: "rgba(255,255,255,0.2)", fontSize: "11px" }}
+              >
+                Powered by <span style={{ color: tmpl.accent }}>PitchAI</span>
+              </span>
+            </div>
           </div>
         </div>
 
@@ -438,112 +523,59 @@ function SlidePreview({
           <button
             onClick={() => setCurrent(Math.max(0, current - 1))}
             disabled={current === 0}
-            className="bg-white/10 hover:bg-white/20 disabled:opacity-30 text-white px-6 py-3 rounded-xl transition"
+            className="border border-white/10 bg-white/5 hover:bg-white/10 disabled:opacity-20 text-white px-6 py-3 rounded-xl text-sm transition"
           >
             ← Pehle
           </button>
-
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             {slidesList.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrent(i)}
-                className={`w-3 h-3 rounded-full transition ${i === current ? "bg-white" : "bg-white/30"}`}
+                className={`rounded-full transition-all ${i === current ? "w-6 h-2 bg-white" : "w-2 h-2 bg-white/20 hover:bg-white/40"}`}
               />
             ))}
           </div>
-
           <button
             onClick={() =>
               setCurrent(Math.min(slidesList.length - 1, current + 1))
             }
             disabled={current === slidesList.length - 1}
-            className="bg-white/10 hover:bg-white/20 disabled:opacity-30 text-white px-6 py-3 rounded-xl transition"
+            className="border border-white/10 bg-white/5 hover:bg-white/10 disabled:opacity-20 text-white px-6 py-3 rounded-xl text-sm transition"
           >
             Agle →
           </button>
         </div>
 
-        {/* Buttons */}
-        <div className="mt-8 flex flex-col items-center gap-4">
+        {/* Action Buttons */}
+        <div className="mt-8 grid grid-cols-2 gap-3">
           <button
             onClick={handleShare}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-xl font-bold text-lg transition transform hover:scale-105 w-full max-w-sm"
+            className="flex items-center justify-center gap-2 border border-white/10 bg-white/5 hover:bg-white/10 text-white py-4 rounded-2xl text-sm font-medium transition"
           >
-            🔗 Share Link Banao
+            🔗 Share Link
           </button>
-
-          <button
-            onClick={handleDownloadPDF}
-            disabled={downloading}
-            className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-10 py-4 rounded-xl font-bold text-lg transition transform hover:scale-105 w-full max-w-sm"
-          >
-            {downloading ? (
-              <span className="flex items-center justify-center gap-3">
-                <svg
-                  className="animate-spin h-5 w-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v8z"
-                  />
-                </svg>
-                PDF Ban Raha Hai... ({current + 1}/{slidesList.length})
-              </span>
-            ) : (
-              "📄 PDF Download Karo"
-            )}
-          </button>
-
           <button
             onClick={handleDownloadPPTX}
-            className="bg-orange-600 hover:bg-orange-700 text-white px-10 py-4 rounded-xl font-bold text-lg transition transform hover:scale-105 w-full max-w-sm"
+            className="flex items-center justify-center gap-2 border border-white/10 bg-white/5 hover:bg-white/10 text-white py-4 rounded-2xl text-sm font-medium transition"
           >
-            📊 PPTX Download Karo
+            📊 PPTX Download
           </button>
-
           <button
             onClick={handleGetScore}
             disabled={scoring}
-            className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-10 py-4 rounded-xl font-bold text-lg transition transform hover:scale-105 w-full max-w-sm"
+            className="flex items-center justify-center gap-2 border border-purple-500/30 bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 py-4 rounded-2xl text-sm font-medium transition disabled:opacity-50"
           >
-            {scoring ? (
-              <span className="flex items-center justify-center gap-3">
-                <svg
-                  className="animate-spin h-5 w-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v8z"
-                  />
-                </svg>
-                Score Calculate Ho Raha Hai...
-              </span>
-            ) : (
-              "🎯 AI Pitch Score Dekho"
-            )}
+            {scoring ? "⏳ Score Aa Raha Hai..." : "🎯 AI Pitch Score"}
+          </button>
+          <button
+            onClick={handleDownloadPDF}
+            disabled={downloading}
+            className="flex items-center justify-center gap-2 bg-white text-black hover:bg-gray-100 py-4 rounded-2xl text-sm font-semibold transition disabled:opacity-50"
+          >
+            {downloading
+              ? `⏳ ${current + 1}/${slidesList.length}`
+              : "📄 PDF Download"}
           </button>
         </div>
 
